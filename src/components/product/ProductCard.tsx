@@ -20,7 +20,7 @@ export function ProductCard({ product, showAvailability = false, headingLevel: H
         {!product.available && <span className="product-card__ribbon">Sin stock</span>}
       </div>
       <div className="product-card__body">
-        <p className="product-card__category">{product.category.name}</p>
+        <p className="product-card__category">{product.category?.name ?? 'Sin categoría'}</p>
         <Heading id={titleId} className="product-card__title">
           {product.name}
         </Heading>
