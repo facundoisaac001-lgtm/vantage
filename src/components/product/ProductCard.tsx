@@ -16,7 +16,7 @@ export function ProductCard({ product, showAvailability = false, headingLevel: H
   return (
     <article className={`product-card${product.available ? '' : ' product-card--sold-out'}`} aria-labelledby={titleId}>
       <div className="product-card__media">
-        <img src={product.imageUrl} alt={product.imageAlt} loading="lazy" width={600} height={600} />
+        <img src={product.imagen} alt={product.imageAlt} loading="lazy" width={600} height={600} />
         {!product.available && <span className="product-card__ribbon">Sin stock</span>}
       </div>
       <div className="product-card__body">

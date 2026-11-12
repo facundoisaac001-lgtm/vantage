@@ -6,7 +6,6 @@ import { QuantitySelector } from '../components/product/QuantitySelector'
 import { SizeSelector } from '../components/product/SizeSelector'
 import { EmptyState, ErrorState } from '../components/ui/StatusMessage'
 import { useProduct } from '../hooks/useProducts'
-import { startOrderDraft } from '../services/orderSession'
 import type { Product } from '../types/api'
 import { formatPrice } from '../utils/format'
 import { ORDER_RULES } from '../utils/validators'
@@ -22,8 +21,8 @@ export function ProductPage() {
         Volver al catálogo
       </Link>
 
-      {isLoading && !product ? (
-        <ProductDetailSkeleton />
+      {isLoading ? (
+        <p>Cargando producto...</p>
       ) : error?.code === 'NOT_FOUND' ? (
         <>
           <title>Prenda no encontrada | Pamilu</title>
@@ -36,15 +35,16 @@ export function ProductPage() {
       ) : error && !product ? (
         <ErrorState onRetry={retry} message={error.message} />
       ) : product ? (
-        <ProductDetail key={product.id} product={product} />
+        <ProductDetailContent key={product.id} product={product} />
       ) : null}
     </div>
   )
 }
 
-function ProductDetail({ product }: { product: Product }) {
+function ProductDetailContent({ product }: { product: Product }) {
   const navigate = useNavigate()
-  
+  console.log("Datos del producto:", product);
+
   // Protegemos con ? y || [] para evitar errores si 'sizes' no llega
   const sizes = product.sizes || []
   const sizesInStock = sizes.filter((s) => s.stock > 0)
@@ -63,7 +63,7 @@ function ProductDetail({ product }: { product: Product }) {
 
   function handleOrder() {
     if (!canOrder) return
-    startOrderDraft({ productId: product.id, size, quantity })
+    // startOrderDraft({ productId: product.id, size, quantity })
     navigate('/pedido')
   }
 
