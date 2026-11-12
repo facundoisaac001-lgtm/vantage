@@ -44,17 +44,20 @@ export function ProductPage() {
 
 function ProductDetail({ product }: { product: Product }) {
   const navigate = useNavigate()
-  const sizesInStock = product.sizes.filter((s) => s.stock > 0)
+  
+  // Protegemos con ? y || [] para evitar errores si 'sizes' no llega
+  const sizes = product.sizes || []
+  const sizesInStock = sizes.filter((s) => s.stock > 0)
   const [size, setSize] = useState(() => (sizesInStock.length === 1 ? sizesInStock[0].size : ''))
   const [quantity, setQuantity] = useState(1)
 
-  const selected = product.sizes.find((s) => s.size === size)
+  const selected = sizes.find((s) => s.size === size)
   const maxQuantity = Math.min(selected?.stock ?? 1, ORDER_RULES.maxQuantityPerOrder)
   const canOrder = Boolean(selected && selected.stock > 0)
 
   function handleSizeChange(next: string) {
     setSize(next)
-    const stock = product.sizes.find((s) => s.size === next)?.stock ?? 1
+    const stock = sizes.find((s) => s.size === next)?.stock ?? 1
     setQuantity((q) => Math.min(q, Math.max(1, stock)))
   }
 
@@ -78,12 +81,12 @@ function ProductDetail({ product }: { product: Product }) {
       </div>
 
       <div className="product-detail__info">
-        <p className="eyebrow">{product.category.name}</p>
+        <p className="eyebrow">{product.category?.name || 'Indumentaria'}</p>
         <h1 className="product-detail__title">{product.name}</h1>
         <p className="product-detail__price">{formatPrice(product.price)}</p>
         <AvailabilityBadge
           available={product.available}
-          detail={product.available ? `${sizesInStock.length} de ${product.sizes.length} talles` : 'Pronto vuelve'}
+          detail={product.available ? `${sizesInStock.length} de ${sizes.length} talles` : 'Pronto vuelve'}
         />
         <p className="product-detail__description">{product.description}</p>
 
@@ -95,7 +98,7 @@ function ProductDetail({ product }: { product: Product }) {
               handleOrder()
             }}
           >
-            <SizeSelector name="size" sizes={product.sizes} value={size} onChange={handleSizeChange} legend="Elegí tu talle" />
+            <SizeSelector name="size" sizes={sizes} value={size} onChange={handleSizeChange} legend="Elegí tu talle" />
             <QuantitySelector
               id="quantity"
               value={quantity}
@@ -122,24 +125,5 @@ function ProductDetail({ product }: { product: Product }) {
         )}
       </div>
     </article>
-  )
-}
-
-function ProductDetailSkeleton() {
-  return (
-    <div className="product-detail" aria-busy="true">
-      <span className="sr-only" role="status">
-        Cargando prenda…
-      </span>
-      <div className="product-detail__media skeleton" aria-hidden="true" />
-      <div className="product-detail__info" aria-hidden="true">
-        <span className="skeleton skeleton--text skeleton--short" />
-        <span className="skeleton skeleton--title" />
-        <span className="skeleton skeleton--text skeleton--short" />
-        <span className="skeleton skeleton--paragraph" />
-        <span className="skeleton skeleton--chips" />
-        <span className="skeleton skeleton--button" />
-      </div>
-    </div>
   )
 }
