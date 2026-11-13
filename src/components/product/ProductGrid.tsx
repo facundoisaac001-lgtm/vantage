@@ -28,7 +28,7 @@ export function ProductGrid({
       </div>
     )
   }
-
+console.log(products)
   return (
     <ul className={`product-grid${isRefreshing ? ' is-refreshing' : ''}`} aria-busy={isRefreshing || undefined}>
       {products?.map((product) => (
